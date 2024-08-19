@@ -1,77 +1,56 @@
-// main.cpp
-#include <SFML/Graphics.hpp>
+#include <iostream>
 #include <vector>
-#include <random>
+#include <string>
 
-const int CHUNK_SIZE = 16;
-const int WORLD_SIZE = 10;
-
+// Estructura para representar un bloque en el mundo
 struct Block {
-    int type;
-    bool solid;
+    int x, y, z;
+    char tipo; // 'A' para aire, 'T' para tierra, 'P' para piedra
 };
 
-class Chunk {
+// Clase para representar el mundo
+class Mundo {
 public:
-    Chunk(int x, int z) {
-        m_x = x;
-        m_z = z;
-        m_blocks.resize(CHUNK_SIZE * CHUNK_SIZE);
-        generateBlocks();
+    std::vector<std::vector<std::vector<Block>>> bloques;
+    int ancho, alto, profundidad;
+
+    Mundo(int ancho, int alto, int profundidad) : ancho(ancho), alto(alto), profundidad(profundidad) {
+        bloques.resize(ancho, std::vector<std::vector<Block>>(alto, std::vector<Block>(profundidad)));
     }
 
-    void draw(sf::RenderWindow& window) {
-        for (int x = 0; x < CHUNK_SIZE; x++) {
-            for (int z = 0; z < CHUNK_SIZE; z++) {
-                if (m_blocks[x + z * CHUNK_SIZE].solid) {
-                    sf::RectangleShape block(sf::Vector2f(32, 32));
-                    block.setPosition(m_x * CHUNK_SIZE * 32 + x * 32, m_z * CHUNK_SIZE * 32 + z * 32);
-                    block.setFillColor(sf::Color(100, 100, 100));
-                    window.draw(block);
+    void generarMundo() {
+        for (int x = 0; x < ancho; x++) {
+            for (int y = 0; y < alto; y++) {
+                for (int z = 0; z < profundidad; z++) {
+                    if (y == 0) {
+                        bloques[x][y][z].tipo = 'T'; // Tierra en la base
+                    } else if (y == alto - 1) {
+                        bloques[x][y][z].tipo = 'P'; // Piedra en la cima
+                    } else {
+                        bloques[x][y][z].tipo = 'A'; // Aire en el medio
+                    }
                 }
             }
         }
     }
 
-private:
-    void generateBlocks() {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dis(0.0, 1.0);
-
-        for (int i = 0; i < m_blocks.size(); i++) {
-            m_blocks[i].type = (dis(gen) < 0.5) ? 0 : 1;
-            m_blocks[i].solid = (m_blocks[i].type == 0);
+    void imprimirMundo() {
+        for (int y = 0; y < alto; y++) {
+            for (int x = 0; x < ancho; x++) {
+                for (int z = 0; z < profundidad; z++) {
+                    std::cout << bloques[x][y][z].tipo << " ";
+                }
+                std::cout << std::endl;
+            }
+            std::cout << std::endl;
         }
     }
-
-    int m_x, m_z;
-    std::vector<Block> m_blocks;
 };
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WORLD_SIZE * CHUNK_SIZE * 32, WORLD_SIZE * CHUNK_SIZE * 32), "Sandbox Game");
-
-    std::vector<Chunk> chunks;
-    for (int x = 0; x < WORLD_SIZE; x++) {
-        for (int z = 0; z < WORLD_SIZE; z++) {
-            chunks.emplace_back(x, z);
-        }
-    }
-
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-        window.clear();
-        for (const auto& chunk : chunks) {
-            chunk.draw(window);
-        }
-        window.display();
-    }
+    Mundo mundo(10, 10, 10);
+    mundo.generarMundo();
+    mundo.imprimirMundo();
 
     return 0;
 }
