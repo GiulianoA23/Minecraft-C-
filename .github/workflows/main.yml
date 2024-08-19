@@ -9,41 +9,15 @@ on:
 jobs:
 
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - os: ubuntu-latest
-            artifact_name: SandboxGame-Linux.zip
-            executable_name: SandboxGame
-          - os: windows-latest
-            artifact_name: SandboxGame-Windows.zip
-            executable_name: SandboxGame.exe
-          - os: macos-latest
-            artifact_name: SandboxGame-macOS.zip
-            executable_name: SandboxGame
+    runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v2
     
-    - name: Install dependencies
-      if: matrix.os == 'ubuntu-latest'
+    - name: Install SFML
       run: |
         sudo apt-get update
         sudo apt-get install -y libsfml-dev
-        
-    - name: Setup SFML (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: microsoft/vcpkg@master
-      with:
-        install: sfml
-        
-    - name: Setup SFML (macOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew update
-        brew install sfml
         
     - name: Configure CMake
       run: cmake -S . -B build
@@ -54,15 +28,22 @@ jobs:
     - name: Package
       run: |
         cd build
-        7z a ../${{ matrix.artifact_name }} ${{ matrix.executable_name }}
+        7z a ../SandboxGame.zip .
+        
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.6
+      with:
+        name: SandboxGame
+        path: SandboxGame.zip
+        if-no-files-found: error
+        retention-days: 30
+        compression-level: 6
+        overwrite: true
         
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: |
-          SandboxGame-Linux.zip
-          SandboxGame-Windows.zip
-          SandboxGame-macOS.zip
+        files: SandboxGame.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
