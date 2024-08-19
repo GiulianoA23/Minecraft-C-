@@ -24,7 +24,7 @@ jobs:
 
     - name: Build executable
       run: |
-        pyinstaller --onefile --name sandbox_game.exe main.py
+        pyinstaller --onefile --win-private-assemblies --name sandbox_game.exe main.py
 
     - name: Show project structure (final)
       run: |
