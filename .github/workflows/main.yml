@@ -8,7 +8,46 @@ on:
 
 jobs:
 
-  build:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install SFML
+      run: |
+        choco install -y sfml
+        
+    - name: Configure CMake
+      run: cmake -S . -B build -G "Visual Studio 16 2019" -A x64
+      
+    - name: Build
+      run: cmake --build build --config Release
+      
+    - name: Package
+      run: |
+        cd build
+        Compress-Archive -Path SandboxGame.exe -DestinationPath ../SandboxGame.zip
+        
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.6
+      with:
+        name: SandboxGame-Windows
+        path: SandboxGame.zip
+        if-no-files-found: error
+        retention-days: 30
+        compression-level: 6
+        overwrite: true
+        
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: SandboxGame.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
     runs-on: ubuntu-latest
     
     steps:
@@ -28,13 +67,14 @@ jobs:
     - name: Package
       run: |
         cd build
-        7z a ../SandboxGame.zip .
+        chmod +x SandboxGame
+        7z a ../SandboxGame-Linux.zip SandboxGame
         
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.6
       with:
-        name: SandboxGame
-        path: SandboxGame.zip
+        name: SandboxGame-Linux
+        path: SandboxGame-Linux.zip
         if-no-files-found: error
         retention-days: 30
         compression-level: 6
@@ -44,6 +84,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: SandboxGame.zip
+        files: |
+          SandboxGame.zip
+          SandboxGame-Linux.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
