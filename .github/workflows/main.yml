@@ -31,10 +31,6 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
       
-    - run: |
-        cd build
-        Compress-Archive -Path SandboxGame.exe -DestinationPath ../SandboxGame-Windows.zip
-        
     - name: Upload Artifact
       uses: actions/upload-artifact@v4.3.6
       with:
