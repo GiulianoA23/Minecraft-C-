@@ -15,7 +15,7 @@ find_package(GLM REQUIRED)
 
 # Archivos fuente
 set(SOURCES
-    src/main.cpp
+    main.cpp
 )
 
 # Crear el ejecutable
