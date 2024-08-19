@@ -1,4 +1,4 @@
-name: Windows
+name: Build y ejecutar
 
 on:
   push:
@@ -6,17 +6,14 @@ on:
       - main
 
 jobs:
-  windows:
-    runs-on: windows-latest
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout el código
         uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Compilar y ejecutar
         run: |
-          cmake --build
-
-      - name: Compile and run
-        run: |
-          cmake --build . --target sandbox
-          .\bin\sandbox.exe
+          cmake .
+          cmake --build . --target Sandbox
+          ./Sandbox
