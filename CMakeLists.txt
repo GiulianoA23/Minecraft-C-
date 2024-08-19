@@ -4,6 +4,7 @@ project(Sandbox)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(${PROJECT_NAME} src/main.cpp src/Sandbox.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 
-target_link_libraries(${PROJECT_NAME} SDL2 SDL2_image)
+find_package(SFML 2.5.1 COMPONENTS graphics window REQUIRED)
+target_link_libraries(${PROJECT_NAME} ${SFML_LIBRARIES})
