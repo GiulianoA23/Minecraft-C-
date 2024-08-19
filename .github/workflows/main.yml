@@ -12,10 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup MinGW
-        uses: mingw-w64/setup@v1
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v2
         with:
-          architecture: x86_64
+          platform: x64
 
       - name: Build
         run: |
