@@ -1,0 +1,25 @@
+{
+  "name": "minecraft-ts-game",
+  "version": "1.0.0",
+  "description": "A simple Minecraft-style sandbox game developed in TypeScript.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "typescript",
+    "minecraft",
+    "sandbox",
+    "three.js",
+    "game"
+  ],
+  "author": "Giuliano",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.153.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
