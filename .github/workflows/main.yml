@@ -1,4 +1,4 @@
-name: Windows Build
+name: Windows
 
 on:
   push:
@@ -6,23 +6,17 @@ on:
       - main
 
 jobs:
-  build:
+  windows:
     runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up MinGW
-        uses: egor-tensin/setup-mingw@v2
-        with:
-          platform: x64
-
-      - name: Build
+      - name: Install dependencies
         run: |
-          g++ -o main.exe main.cpp
+          cmake --build . --target install
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: main.exe
-          path: main.exe
+      - name: Compile and run
+        run: |
+          cmake --build . --target sandbox
+          .\bin\sandbox.exe
