@@ -30,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: sandbox-game
-        path: dist/main.exe
+        path: main.exe
