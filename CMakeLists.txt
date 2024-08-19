@@ -7,6 +7,9 @@ project(SandboxGame)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Configurar directorios de búsqueda para las dependencias
+set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps") # Directorio donde se instalarán las dependencias
+
 # Encontrar las bibliotecas necesarias
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
