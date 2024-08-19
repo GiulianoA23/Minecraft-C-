@@ -1,21 +1,29 @@
-name: Build and Deploy
+name: Build and Export
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  build:
+    runs-on: windows-latest
 
-      - name: Build and deploy
-        run: |
-          git clone https://github.com/SFML/SFML.git
-          cd SFML
-          cmake .
-          cmake --build .
-          ./SandboxGame
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up CMake
+      uses: jwlawson/actions-setup-cmake@v1
+
+    - name: Configure with CMake
+      run: cmake -S . -B build
+
+    - name: Build
+      run: cmake --build build --config Release
+
+    - name: Archive the build
+      uses: actions/upload-artifact@v3
+      with:
+        name: MinecraftStyleGame
+        path: build/Release/MinecraftStyleGame.exe
