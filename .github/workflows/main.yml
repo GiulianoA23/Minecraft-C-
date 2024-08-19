@@ -31,7 +31,7 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
       
-      run: |
+    - run: |
         choco install -y cmake
         choco install -y zip
         cd build
