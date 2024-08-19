@@ -1,29 +1,36 @@
-name: Build and Export
+name: Build and Package
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
 
-    - name: Set up CMake
-      uses: jwlawson/actions-setup-cmake@v1
-
-    - name: Configure with CMake
-      run: cmake -S . -B build
-
-    - name: Build
-      run: cmake --build build --config Release
-
-    - name: Archive the build
-      uses: actions/upload-artifact@v3
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
-        name: MinecraftStyleGame
-        path: build/Release/MinecraftStyleGame.exe
+        node-version: '16'
+
+    - name: Install dependencies
+      run: |
+        npm install
+        npm install three
+
+    - name: Compile TypeScript
+      run: npx tsc
+
+    - name: Package into executable
+      run: npm install -g pkg
+    - run: pkg dist/index.js --output minecraft-ts-game.exe
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: minecraft-ts-game
+        path: minecraft-ts-game.exe
