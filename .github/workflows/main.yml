@@ -32,8 +32,6 @@ jobs:
         java-version: '11'
       
     - run: |
-        choco install -y cmake
-        choco install -y zip
         cd build
         Compress-Archive -Path SandboxGame.exe -DestinationPath ../SandboxGame-Windows.zip
         
