@@ -24,10 +24,11 @@ jobs:
 
     - name: Build executable
       run: |
-        pyinstaller --onefile main.py
+        pyinstaller --onefile --name sandbox_game main.py
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: sandbox-game
-        path: main.exe
+        path: dist/sandbox_game.exe
+
