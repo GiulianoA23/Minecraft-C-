@@ -1,4 +1,4 @@
-name: Build and Package
+name: Build and Deploy
 
 on:
   push:
@@ -7,33 +7,21 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
-
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
+      - name: Setup Python
+        uses: actions/setup-python@v5.1.1
+        with:
+          python-version: '3.12' 
+            
+      - name: Install dependencies
+        run: |
+          pip install pygame PyOpenGL PyOpenGL-accelerate
 
-    - name: Install dependencies
-      run: |
-        npm install
-        npm install three
-        npm install typescript --save-dev
-        npx tsc --init
-        npm i --save-dev @types/three
-
-    - name: Compile TypeScript
-      run: npx tsc
-
-    - name: Package into executable
-      run: npm install -g pkg
-    - run: pkg dist/index.js --output minecraft-ts-game.exe
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: minecraft-ts-game
-        path: minecraft-ts-game.exe
+      - name: Build and deploy
+        run: |
+          python setup.py bdist_wheel
+          python -m twine upload dist/*
