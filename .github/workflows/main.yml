@@ -12,9 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - run: |
-        
-
       - name: Build and deploy
         run: |
           git clone https://github.com/SFML/SFML.git
