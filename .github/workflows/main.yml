@@ -9,14 +9,15 @@ on:
 jobs:
 
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v2
     
     - name: Install SFML
       run: |
-        choco install -y sfml
+        sudo apt-get update
+        sudo apt-get install -y libsfml-dev
         
     - name: Configure CMake
       run: cmake -S . -B build
@@ -24,8 +25,15 @@ jobs:
     - name: Build
       run: cmake --build build --config Release
       
-    - name: Package
+    - name: Package Windows
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+      
       run: |
+        choco install -y cmake
+        choco install -y zip
         cd build
         Compress-Archive -Path SandboxGame.exe -DestinationPath ../SandboxGame-Windows.zip
         
@@ -38,4 +46,11 @@ jobs:
         retention-days: 30
         compression-level: 6
         overwrite: true
-      
+        
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: SandboxGame-Windows.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
