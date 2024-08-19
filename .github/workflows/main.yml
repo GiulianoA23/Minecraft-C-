@@ -20,6 +20,16 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y cmake g++ libglfw3-dev libglew-dev libglm-dev
 
+    - name: Configure GLFW
+      run: |
+        mkdir -p ~/libraries/glfw
+        cd ~/libraries/glfw
+        wget https://github.com/glfw/glfw/archive/refs/tags/3.3.8.zip
+        unzip 3.3.8.zip
+        cd glfw-3.3.8
+        cmake .
+        sudo make install
+
     - name: Create build directory
       run: mkdir build
 
