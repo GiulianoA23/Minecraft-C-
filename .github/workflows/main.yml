@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Export to Windows
 
 on:
   push:
@@ -8,20 +8,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5.1.1
-        with:
-          python-version: '3.12' 
-            
-      - name: Install dependencies
-        run: |
-          pip install pygame PyOpenGL PyOpenGL-accelerate
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-      - name: Build and deploy
-        run: |
-          python setup.py bdist_wheel
-          python -m twine upload dist/*
+    - name: Install dependencies
+      run: |
+        pip install pyglet numpy pyinstaller
+
+    - name: Build executable
+      run: |
+        pyinstaller --onefile main.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: sandbox-game
+        path: dist/main.exe
