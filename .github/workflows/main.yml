@@ -1,31 +1,28 @@
-# .github/workflows/build.yml
-name: Build
+name: Windows Build
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-
-  build-windows:
+  build:
     runs-on: windows-latest
-    
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Install SFML
-      run: |
-        choco install -y sfml
-        echo "SFML_ROOT=$env:PROGRAMFILES\SFML" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-    
-    - name: Build
-      run: |
-        g++ -I$env:SFML_ROOT\include -L$env:SFML_ROOT\lib -o sandbox.exe main.cpp -lsfml-graphics -lsfml-window -lsfml-system
-    
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: sandbox-windows
-        path: sandbox.exe
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup MinGW
+        uses: mingw-w64/setup@v1
+        with:
+          architecture: x86_64
+
+      - name: Build
+        run: |
+          g++ -o main.exe main.cpp
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: main.exe
+          path: main.exe
