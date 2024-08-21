@@ -1,38 +1,17 @@
-name: Build and Export to Windows
+name: Build and Export
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
-
-    - name: Install dependencies
-      run: |
-        pip install pyglet numpy pyinstaller
-
-    - name: Build executable
-      run: |
-        pyinstaller --onefile --win-private-assemblies --name sandbox_game.exe main.py
-
-    - name: Show project structure (final)
-      run: |
-        ls -R
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: sandbox-game
-        path: dist/sandbox_game.exe
-
+      - uses: actions/checkout@v3
+      - name: Configure CMake
+        run: cmake -S . -B build
+      - name: Build
+        run: cmake --build build
+      - name: Export
+        run: copy build/MinecraftClone.exe dist/
